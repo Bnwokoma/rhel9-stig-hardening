@@ -22,6 +22,27 @@ Technologies Used
 -   `sysctl` + `/etc/sysctl.d` for runtime and persistent tuning
 
 
+IPv4 STIGs Applied
+---------------------
+
+| STIG ID | sysctl Setting | Compliant Value | Description |
+| --- | --- | --- | --- |
+| RHEL-09-253010 | `net.ipv4.tcp_syncookies` | `1` | Enables TCP syncookies to protect against SYN floods |
+| RHEL-09-253015 | `net.ipv4.conf.all.accept_redirects` | `0` | Disables acceptance of ICMP redirects |
+| RHEL-09-253020 | `net.ipv4.conf.all.accept_source_route` | `0` | Disables source-routed packet forwarding |
+| RHEL-09-253025 | `net.ipv4.conf.all.log_martians` | `1` | Enables logging of suspicious packets (martians) |
+| RHEL-09-253030 | `net.ipv4.conf.default.log_martians` | `1` | Enables martian logging on default interfaces |
+| RHEL-09-253035 | `net.ipv4.conf.all.rp_filter` | `1` | Enables reverse path filtering on all interfaces |
+| RHEL-09-253040 | `net.ipv4.conf.default.accept_redirects` | `0` | Disables ICMP redirect acceptance on default interfaces |
+| RHEL-09-253045 | `net.ipv4.conf.default.accept_source_route` | `0` | Disables source-routing on default interfaces |
+| RHEL-09-253050 | `net.ipv4.conf.default.rp_filter` | `1` | Enables reverse path filtering by default |
+| RHEL-09-253055 | `net.ipv4.icmp_echo_ignore_broadcasts` | `1` | Ignores ICMP echo requests to broadcast addresses |
+| RHEL-09-253060 | `net.ipv4.icmp_ignore_bogus_error_responses` | `1` | Ignores bogus ICMP error messages |
+| RHEL-09-253065 | `net.ipv4.conf.all.send_redirects` | `0` | Disables sending of ICMP redirects (all interfaces) |
+| RHEL-09-253070 | `net.ipv4.conf.default.send_redirects` | `0` | Disables ICMP redirects on default interfaces |
+| RHEL-09-253075 | `net.ipv4.conf.all.forwarding` | `0` | Disables IP forwarding unless acting as a router |
+
+
 * * * * *
 
 Phase 1: Manual STIG Application & Validation
@@ -35,15 +56,15 @@ sudo /usr/lib/systemd/systemd-sysctl --cat-config | grep net.ipv4
 
 This revealed several non-compliant values on my local system, including:
 
--   `net.ipv4.conf.default.send_redirects = 1` (expected: `0`)
+-   `net.ipv4.conf.default.send_redirects = 1` (expected: 0)
 
--   `net.ipv4.conf.all.send_redirects = 1` (expected: `0`)
+-   `net.ipv4.conf.all.send_redirects = 1` (expected: 0)
 
--   `net.ipv4.icmp_ignore_bogus_error_responses = 0` (expected: `1`)
+-   `net.ipv4.icmp_ignore_bogus_error_responses = 0` (expected: 1)
 
 ### Manual Remediation
 
-[Before applying the changes, you can view this pie chart to see the state of compliance:](/screenshots/before_remediation)
+Before applying the changes, you can view this pie chart to see the state of compliance:[Before remediation](/screenshots/before_remediation)
 
 I created the following file to apply persistent sysctl changes:
 
@@ -51,7 +72,7 @@ I created the following file to apply persistent sysctl changes:
 sudo vim /etc/sysctl.d/stig-ipv4.conf
 ```
 
-[See full contents of file here:](/screenshots/sysctl_config_file)
+[See full contents of file here:][System configurations](/screenshots/sysctl_config_file)
 
 Example contents:
 
@@ -72,11 +93,6 @@ To apply the settings:
 sudo sysctl --system
 ```
 
-[Confirmed Compliance:](/screenshots/compliance) 
-```sudo /usr/lib/systemd/systemd-sysctl --cat-config | grep net.ipv4
-```
-
-
 * * * * *
 
 🤖 Phase 2: STIG Automation with Ansible
@@ -87,10 +103,11 @@ sudo sysctl --system
 I wanted to create a seperate file to store the variables. I like to clean my playbooks clean and readable.
 ```
 stig_ipv4_settings:
-  - { name: "net.ipv4.tcp_syncookies", value: "1" }
-  - { name: "net.ipv4.conf.all.accept_redirects", value: "0" }
+  - { name: "net.ipv4.tcp_syncookies", value: "1" }                      
+  - { name: "net.ipv4.conf.all.accept_redirects", value: "0" }          
   - { name: "net.ipv4.conf.all.accept_source_route", value: "0" }
   - { name: "net.ipv4.conf.default.log_martians", value: "1" }
+  - { name: "net.ipv4.conf.all.log_martians", value: "1"}
   - { name: "net.ipv4.conf.all.rp_filter", value: "1" }
   - { name: "net.ipv4.conf.default.rp_filter", value: "1" }
   - { name: "net.ipv4.conf.default.accept_redirects", value: "0" }
@@ -100,6 +117,7 @@ stig_ipv4_settings:
   - { name: "net.ipv4.conf.all.send_redirects", value: "0" }
   - { name: "net.ipv4.conf.default.send_redirects", value: "0" }
   - { name: "net.ipv4.conf.all.forwarding", value: "0" }
+
 ```
 
 ### 📜 playbooks/ipv4_hardening.yml
@@ -156,6 +174,9 @@ After applying STIG IPv4 hardening, I created a separate Ansible playbook to ver
 
 - Generates a readable Markdown compliance report on each host using a Jinja2 template
 
+I ran the playbook twice, once showing what would happen if a remote host isnt compliant and vice versa
+[Screenshot with a non-compliant STIG:] (/screenshots/verify_compliance_red)
+[Screenshot with 100% compliant STIGs:](/screenshots/verify_compliance_green)
 
 #### The playbooks:
 
