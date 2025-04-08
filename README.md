@@ -4,7 +4,7 @@ RHEL 9 STIG IPv4 Hardening (Manual & Automated with Ansible)
 📌 Overview
 -----------
 
-This project demonstrates how I manually validated and remediated IPv4-related STIG controls on RHEL 9, then automated enforcement using Ansible. I used DISA STIG benchmark Version 2, Release 3 (Benchmark Date: 2025-01-30) to guide compliance hardening and implemented persistent changes via sysctl. The final result is a repeatable, scalable security baseline applied to multipleremote RHEL hosts.
+This project demonstrates how I manually validated and remediated IPv4-related STIG controls on RHEL 9, then automated enforcement using Ansible. I used DISA STIG benchmark Version 2, Release 3 (Benchmark Date: 2025-01-30) to guide compliance hardening and implemented persistent changes via sysctl. The final result is a repeatable, scalable security baseline applied to multiple remote RHEL hosts.
 
 * * * * *
 
@@ -16,6 +16,8 @@ Technologies Used
 -   Ansible
 
 -   Stig Viewer
+
+-   Jinja
 
 -   DISA STIG v2r3 (2025-01-30)
 
@@ -64,7 +66,7 @@ This revealed several non-compliant values on my local system, including:
 
 ### Manual Remediation
 
-Before applying the changes, you can view this pie chart to see the state of compliance:[Before remediation](/screenshots/before_remediation)
+Before applying the changes, you can view this pie chart to see the state of compliance: [Assessment results summary before remediation](/screenshots/before_remediation.png)
 
 I created the following file to apply persistent sysctl changes:
 
@@ -72,7 +74,7 @@ I created the following file to apply persistent sysctl changes:
 sudo vim /etc/sysctl.d/stig-ipv4.conf
 ```
 
-See full contents of file here:[System configurations](/screenshots/sysctl_config_file)
+See full contents of file here: [System configurations](/screenshots/sysctl_config_file.png)
 
 Example contents:
 
@@ -98,9 +100,10 @@ sudo sysctl --system
 Phase 2: STIG Automation with Ansible
 ----------------------------------------
 
-###[📁 group_vars/rhel.yml](/group_vars/rhel.yml)
-
 I wanted to create a seperate file to store the variables. I like to keep my playbooks clean and readable.
+
+[📁 group_vars/rhel.yml](/group_vars/rhel.yml)
+
 ```
 stig_ipv4_settings:
   - { name: "net.ipv4.tcp_syncookies", value: "1" }                      
@@ -155,16 +158,17 @@ stig_ipv4_settings:
 ### Running the Playbook
 
 ```
-ansible-playbook -i inventory playbooks/ipv4_hardening.yml
+ansible-playbook playbooks/ipv4_hardening.yml
 ```
 
-[Playbook Results:](/screenshots/running_pb)
+[Playbook Results](/screenshots/running_pb.png)
 
 
-[Pie chart after remediation:](/screenshots/after_remediation)
+[Assessment results summary after remediation"](/screenshots/after_remediation.png)
 * * * * *
 
 ### Verifying Compliance on Remote Hosts
+[Results of playbook](screenshots/verify_pb.png)
 
 After applying STIG IPv4 hardening, I created a separate Ansible playbook to verify compliance across all remote hosts. This playbook:
 
@@ -175,8 +179,8 @@ After applying STIG IPv4 hardening, I created a separate Ansible playbook to ver
 - Generates a readable Markdown compliance report on each host using a Jinja2 template
 
 I ran the playbook twice, once showing what would happen if a remote host isnt compliant and vice versa
-[Screenshot with a non-compliant STIG:](/screenshots/verify_compliance_red)
-[Screenshot with 100% compliant STIGs:](/screenshots/verify_compliance_green)
+[Screenshot with a non-compliant STIG:](/screenshots/verify_compliance_red.png)
+[Screenshot with 100% compliant STIGs:](/screenshots/verify_compliance_green.png)
 
 #### The playbooks:
 
