@@ -72,7 +72,7 @@ I created the following file to apply persistent sysctl changes:
 sudo vim /etc/sysctl.d/stig-ipv4.conf
 ```
 
-[See full contents of file here:][System configurations](/screenshots/sysctl_config_file)
+See full contents of file here:[System configurations](/screenshots/sysctl_config_file)
 
 Example contents:
 
@@ -95,12 +95,12 @@ sudo sysctl --system
 
 * * * * *
 
-🤖 Phase 2: STIG Automation with Ansible
+Phase 2: STIG Automation with Ansible
 ----------------------------------------
 
-### 📁 group_vars/rhel.yml
+###[📁 group_vars/rhel.yml](/group_vars/rhel.yml)
 
-I wanted to create a seperate file to store the variables. I like to clean my playbooks clean and readable.
+I wanted to create a seperate file to store the variables. I like to keep my playbooks clean and readable.
 ```
 stig_ipv4_settings:
   - { name: "net.ipv4.tcp_syncookies", value: "1" }                      
@@ -120,7 +120,7 @@ stig_ipv4_settings:
 
 ```
 
-### 📜 playbooks/ipv4_hardening.yml
+### 📜 [playbooks/ipv4_hardening.yml](/playbooks/ipv4_hardening.yml)
 
 ```
 ---
@@ -158,10 +158,10 @@ stig_ipv4_settings:
 ansible-playbook -i inventory playbooks/ipv4_hardening.yml
 ```
 
-[Playbook Results:] (/screenshots/running_pb)
+[Playbook Results:](/screenshots/running_pb)
 
 
-[Pie chart after remediation:] (/screenshots/after_remediation)
+[Pie chart after remediation:](/screenshots/after_remediation)
 * * * * *
 
 ### Verifying Compliance on Remote Hosts
@@ -175,7 +175,7 @@ After applying STIG IPv4 hardening, I created a separate Ansible playbook to ver
 - Generates a readable Markdown compliance report on each host using a Jinja2 template
 
 I ran the playbook twice, once showing what would happen if a remote host isnt compliant and vice versa
-[Screenshot with a non-compliant STIG:] (/screenshots/verify_compliance_red)
+[Screenshot with a non-compliant STIG:](/screenshots/verify_compliance_red)
 [Screenshot with 100% compliant STIGs:](/screenshots/verify_compliance_green)
 
 #### The playbooks:
@@ -183,7 +183,7 @@ I ran the playbook twice, once showing what would happen if a remote host isnt c
 
 - [ipv4_hardening.yml](playbooks/ipv4_hardening.yml) – Applies all IPv4 STIG sysctl settings
 - [verify_ipv4_stigs.yml](playbooks/verify_ipv4_stigs.yml) – Verifies compliance
-- [jinja2 template] (playbooks/templates/ipv4_stig_report.j2)
+- [jinja2 template](playbooks/templates/ipv4_stig_report.j2)
 
 
 ```
