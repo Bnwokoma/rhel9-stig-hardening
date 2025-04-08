@@ -1,0 +1,29 @@
+# Local Ansible config and inventory
+ansible.cfg
+inventory
+
+# Retry files (created when a playbook fails)
+*.retry
+
+# System logs or debug outputs
+*.log
+
+# Editor junk
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# OS/system junk
+.DS_Store
+Thumbs.db
+
+# Python-related (in case of dynamic scripts later)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+

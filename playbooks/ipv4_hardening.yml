@@ -1,0 +1,28 @@
+---
+- name: Enforce IPv4 STIG compliance on RHEL 9 systems
+  hosts: rhel
+  become: yes
+
+  tasks:
+    - name: Apply STIG IPv4 sysctl settings
+      sysctl:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        state: present
+        reload: yes
+      loop: "{{ stig_ipv4_settings }}"
+
+    - name: Persist STIG sysctl settings
+      copy:
+        dest: /etc/sysctl.d/stig-ipv4.conf
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          {% for setting in stig_ipv4_settings %}
+          {{ setting.name }} = {{ setting.value }}
+          {% endfor %}
+
+    - name: Reload all sysctl settings
+      command: sysctl --system
+

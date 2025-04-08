@@ -1,0 +1,13 @@
+IPv4 STIG Compliance Report - {{ ansible_date_time.date }}
+
+Host: {{ inventory_hostname }}
+====================================================================
+
+{% for result in sysctl_check.results %}
+STIG: {{ result.item.name }}
+Expected: {{ result.item.value }}
+Actual:   {{ result.stdout }}
+Status:   {% if result.stdout == result.item.value %}✅ COMPLIANT{% else %}❌ NON-COMPLIANT{% endif %}
+--------------------------------------------------------------------
+{% endfor %}
+
