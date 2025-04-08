@@ -21,8 +21,6 @@ Technologies Used
 
 -   DISA STIG v2r3 (2025-01-30)
 
--   `sysctl` + `/etc/sysctl.d` for runtime and persistent tuning
-
 
 IPv4 STIGs Applied
 ---------------------
@@ -164,7 +162,7 @@ ansible-playbook playbooks/ipv4_hardening.yml
 [Playbook Results](/screenshots/running_pb.png)
 
 
-[Assessment results summary after remediation"](/screenshots/after_remediation.png)
+[Assessment results summary after remediation](/screenshots/after_remediation.png)
 * * * * *
 
 ### Verifying Compliance on Remote Hosts
@@ -178,9 +176,10 @@ After applying STIG IPv4 hardening, I created a separate Ansible playbook to ver
 
 - Generates a readable Markdown compliance report on each host using a Jinja2 template
 
-I ran the playbook twice, once showing what would happen if a remote host isnt compliant and vice versa
-[Screenshot with a non-compliant STIG:](/screenshots/verify_compliance_red.png)
-[Screenshot with 100% compliant STIGs:](/screenshots/verify_compliance_green.png)
+I ran the playbook twice, once showing what would happen if a remote host is not compliant and vice versa.
+- [Screenshot with a non-compliant STIG:](/screenshots/verify_compliance_red.png)
+
+- [Screenshot with 100% compliant STIGs:](/screenshots/verify_compliance_green.png)
 
 #### The playbooks:
 
