@@ -188,7 +188,7 @@ I ran the playbook twice, once showing what would happen if a remote host is not
 - [verify_ipv4_stigs.yml](playbooks/verify_ipv4_stigs.yml) – Verifies compliance
 - [jinja2 template](playbooks/templates/ipv4_stig_report.j2)
 
-
+```
 IPv4 STIG Compliance Report - {{ ansible_date_time.date }}
 
 Host: {{ inventory_hostname }}
@@ -201,7 +201,7 @@ Actual:   {{ result.stdout }}
 Status:   {% if result.stdout == result.item.value %}✅ COMPLIANT{% else %}❌ NON-COMPLIANT{% endif %}
 --------------------------------------------------------------------
 {% endfor %}
-
+```
 * * * * *
 
 ## OpenSCAP Integration: Compliance Validation & Remediation
