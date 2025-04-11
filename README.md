@@ -203,19 +203,76 @@ Status:   {% if result.stdout == result.item.value %}✅ COMPLIANT{% else %}❌ 
 --------------------------------------------------------------------
 {% endfor %}
 
+---------------------
 
-```
+## OpenSCAP Integration: Compliance Validation & Remediation
+
+- To take this RHEL 9 STIG automation project beyond basic hardening, I integrated OpenSCAP, the industry standard compliance auditing tool, to validate and continuously enforce security baselines.
+
+- This added a full scan ➝ fix ➝ verify lifecycle, transforming the project from manual security remediation into an enterprise-grade compliance framework. 
+
+### What I Did
+
+-   Installed and configured OpenSCAP  along with the SCAP Security Guide on Rocky Linux 9.5.
+
+-   Used the official DISA STIG profile (`xccdf_org.ssgproject.content_profile_stig`) to evaluate over 700 security controls on each host.
+
+-   Auto-generated an Ansible remediation playbook using OpenSCAP's `generate fix` feature for scalable enforcement.
+	```bash
+	oscap xccdf generate fix \
+	--profile xccdf_org.ssgproject.content_profile_stig \
+        --fix-type ansible \
+        /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml > openscap_stig_remediate.yml
+
+	```
+-   Used Ansible Vault to securely encrypt privileged credentials used in the playbook.
+	```bash
+	ansible-vault create
+	ansible_become_password: _____
+ 
+	```
+- Then used the vars_files module to reference the vault
+	```bash
+	 vars_files:
+    	   - group_vars/all/vault.yml
+	```
+
+-   Addressed and issue with loss of GUI post-remediation by manually restoring the `graphical.target`. [See here](/TROUBLESHOOTING.md)
+
+-   Re-scanned to validate applied changes.
+
+
+
+## OpenSCAP STIG Compliance – Before vs After Remediation
+
+We validated system hardening by scanning with the official `xccdf_org.ssgproject.content_profile_stig` profile using OpenSCAP before and after applying the generated Ansible playbook.
+
+| Metric            | Before Remediation | After Remediation |
+|------------------|--------------------|-------------------|
+| ✅ Passed         | 177                | 441           |
+| ❌ Failed         | 280                | 19            |
+| ⚠️ High Severity  | 14                 | 5             |
+| ⚠️ Medium         | 245                | 9             |
+| 🟡 Low            | 20                 | 5             |
+| 📉 Score          | **44.48%**         | **93.96%**        |
+
+
+![Before Scan](screenshots/lynx_results_before_remediation.png)
+![After Scan](screenshots/lynx_after_remediation.png)
+
 
 
 Summary
----------
+----------
 
--   Validated 15 IPv4 STIGs manually, confirmed 13 non-compliant
+-   Manually validated 15 IPv4-related DISA STIG controls using `sysctl`, confirming 13 non-compliant settings across RHEL 9 systems.
 
--   Remediated settings manually, then automated using Ansible
+-   Applied remediations via `/etc/sysctl.d/`, then enforced and verified settings using `sysctl --system`.
 
--   Used `sysctl --system` to enforce and verify changes
+-   Automated the hardening process with Ansible, using externalized variables and a reusable playbook for multi-host enforcement.
 
--   Created a repeatable automation approach for multi-host enforcement
+-   Integrated OpenSCAP to scan, generate, and apply remediations, followed by post-remediation scans to confirm compliance gains.
 
-This project demonstrates real-world Linux hardening for enterprise environments and showcases both manual security auditing and Infrastructure-as-Code principles.
+-   Secured privileged credentials using Ansible Vault for safe, production-ready automation.
+
+### This demonstrates the impact of combining manual validation, Ansible automation, and OpenSCAP-based verification to secure RHEL 9 environments at scale.
