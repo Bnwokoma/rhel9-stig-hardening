@@ -27,3 +27,16 @@ __pycache__/
 .env
 venv/
 
+# Ansible Vault files (decrypted or local variants)
+group_vars/all/vault.yml
+group_vars/all/vault.yaml
+.vault_password_file
+
+# Generated scan reports
+reports/*.xml
+reports/*.html
+
+# Secrets or sensitive host-specific vars
+host_vars/*/vault.yml
+host_vars/*/vault.yaml
+
