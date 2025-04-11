@@ -17,9 +17,13 @@ Technologies Used
 
 -   Stig Viewer
 
+-  OpenSCAP & SCAP Security Guide
+
 -   Jinja
 
 -   DISA STIG v2r3 (2025-01-30)
+
+-   Ansible Vault
 
 
 IPv4 STIGs Applied
