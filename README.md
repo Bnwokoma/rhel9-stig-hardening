@@ -256,8 +256,8 @@ We validated system hardening by scanning with the official `xccdf_org.ssgprojec
 | 📉 Score          | **44.48%**         | **93.96%**        |
 
 
-![Before Scan](screenshots/lynx_results_before_remediation.png)
-![After Scan](screenshots/lynx_after_remediation.png)
+- [Before Scan](screenshots/lynx_results_before_remediation.png)
+- [After Scan](screenshots/lynx_after_remediation.png)
 
 
 
