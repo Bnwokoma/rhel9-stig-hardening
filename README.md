@@ -177,9 +177,9 @@ After applying STIG IPv4 hardening, I created a separate Ansible playbook to ver
 - Generates a readable Markdown compliance report on each host using a Jinja2 template
 
 I ran the playbook twice, once showing what would happen if a remote host is not compliant and vice versa.
-- [Screenshot with a non-compliant STIG:](/screenshots/verify_compliance_red.png)
+- [Screenshot with a non-compliant STIG](/screenshots/verify_compliance_red.png)
 
-- [Screenshot with 100% compliant STIGs:](/screenshots/verify_compliance_green.png)
+- [Screenshot with 100% compliant STIGs](/screenshots/verify_compliance_green.png)
 
 #### The playbooks:
 
@@ -189,7 +189,6 @@ I ran the playbook twice, once showing what would happen if a remote host is not
 - [jinja2 template](playbooks/templates/ipv4_stig_report.j2)
 
 
-```
 IPv4 STIG Compliance Report - {{ ansible_date_time.date }}
 
 Host: {{ inventory_hostname }}
@@ -203,7 +202,7 @@ Status:   {% if result.stdout == result.item.value %}✅ COMPLIANT{% else %}❌ 
 --------------------------------------------------------------------
 {% endfor %}
 
----------------------
+* * * * *
 
 ## OpenSCAP Integration: Compliance Validation & Remediation
 
